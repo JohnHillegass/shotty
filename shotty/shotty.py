@@ -66,5 +66,4 @@ def start_instances(project):
     return
 
 if __name__ == '__main__':
-    instances()
-
+    cli()
