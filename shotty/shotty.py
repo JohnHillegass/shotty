@@ -14,6 +14,10 @@ def get_instances(project):
         instances = ec2.instances.all()  
     return instances 
 
+def has_pending_snapshots(volume):
+    snapshots = list(volume.snapshots.all())
+    return snapshots and snapshots[0].state == 'pending'
+
 @click.group()
 def cli():
     """Shotty manages shapshotting"""
@@ -34,7 +38,12 @@ def create_snapshots(project):
 
         instance.stop()
         instance.wait_until_stopped()
+
         for volume in instance.volumes.all():
+            if has_pending_snapshots(volume):
+                print("Skipping {0}, snapshot already in progress".format(volume.id))
+                continue
+
             print("Creating snapshot of {0}...".format(volume.id))
             volume.create_snapshot(Description="Created by shotty")
         
@@ -42,6 +51,7 @@ def create_snapshots(project):
 
         instance.start()
         instance.wait_until_running()
+        
     print('Snapshots completed')
     return   
 
@@ -125,7 +135,9 @@ def snapshots():
 @snapshots.command('list')
 @click.option('--project', default=None, 
   help="Only snapshots for project (tag Project:<name>)")
-def list_snapshots(project):
+@click.option('--all', 'list_all', default=False, is_flag=True,
+  help="List all snapshots for each volume, not just the most recent ones")
+def list_snapshots(project, list_all):
     "List EC2 Instance Volume Snapshots"
     instances = get_instances(project)
     for instance in instances:
@@ -139,6 +151,9 @@ def list_snapshots(project):
                     snapshot.progress,
                     snapshot.start_time.strftime("%c")
                 )))
+                # Only show the completed shapshots but show all if the user wants it
+                if snapshot.state == 'completed' and not list_all:
+                    break
 
     return
 
