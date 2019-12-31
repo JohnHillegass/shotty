@@ -15,3 +15,4 @@ To run this:
   - aws configure --profile shotty
 - It uses boto3 and click to create a cli interface for these functions
 - Ipython is included as a dev dependency in case you want to test anything interactively
+- Setuptools is also included as a dev dependency for packaging and distribution
