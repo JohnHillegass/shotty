@@ -21,9 +21,19 @@ def cli():
 def instances():
     """Commands for instances"""
 
-@cli.group('volumes')
-def volumes():
-    """Commands for volumes"""
+@instances.command('snapshot',
+  help="Create snapshots of all volumes")
+@click.option('--project', default=None, 
+  help="Only instances for project (tag Project:<name>)")
+def create_snapshots(project):
+    "Snapshot EC2 Instance Volumes"
+    instances = get_instances(project)
+    for instance in instances:
+        for volume in instance.volumes.all():
+            print("Creating snapshot of {0}...".format(volume.id))
+            volume.create_snapshot(Description="Created by shotty")
+
+    return   
 
 @instances.command('list')
 @click.option('--project', default=None, 
@@ -41,6 +51,7 @@ def list_instances(project):
             instance.public_dns_name,
             tags.get('Project', '<no project>')
         )))
+
     return
 
 @instances.command('stop')
@@ -52,6 +63,7 @@ def stop_instances(project):
     for instance in instances:
         print("Stopping {0}...".format(instance.id))
         instance.stop()
+
     return
 
 @instances.command('start')
@@ -63,7 +75,55 @@ def start_instances(project):
     for instance in instances:
         print("Starting {0}...".format(instance.id))
         instance.start()
+
     return
+
+@cli.group('volumes')
+def volumes():
+    """Commands for volumes"""
+
+@volumes.command('list')
+@click.option('--project', default=None, 
+  help="Only volumes for project (tag Project:<name>)")
+def list_volumes(project):
+    "List EC2 Instance Volumes"
+    instances = get_instances(project)
+    for instance in instances:
+        for volume in instance.volumes.all():
+            print(', '.join((
+                volume.id,
+                instance.id,
+                volume.state,
+                str(volume.size) + 'GiB',
+                volume.encrypted and "Encrypted" or "Not Encrypted"
+            )))
+
+    return
+
+@cli.group('snapshots')
+def snapshots():
+    """Commands for snapshots"""
+
+@snapshots.command('list')
+@click.option('--project', default=None, 
+  help="Only snapshots for project (tag Project:<name>)")
+def list_snapshots(project):
+    "List EC2 Instance Volume Snapshots"
+    instances = get_instances(project)
+    for instance in instances:
+        for volume in instance.volumes.all():
+            for snapshot in volume.snapshots.all():
+                print(', '.join((
+                    snapshot.id,
+                    volume.id,
+                    instance.id,
+                    snapshot.state,
+                    snapshot.progress,
+                    snapshot.start_time.strftime("%c")
+                )))
+                
+    return
+
 
 if __name__ == '__main__':
     cli()
