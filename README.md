@@ -13,4 +13,5 @@ To run this:
   - pipenv run "python shotty/shotty.py --help"
 - You will need an aws-cli profile setup named shotty that has access to read, stop and snapshot ec2 instances (I used ec2FullAccess on my end)
   - aws configure --profile shotty
-- It used boto3 and click to create a cli interface for these functions
+- It uses boto3 and click to create a cli interface for these functions
+- Ipython is included as a dev dependency in case you want to test anything interactively
