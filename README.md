@@ -19,3 +19,4 @@ To run this:
   - To create a wheel, use:
     - python setup.py bdist_wheel
   - Wheel can be used to install with pip via pip3 install dist/shotty
+  - it can easily be used by placing the .whl file on s3 then sharing, so someone can pip install from there
