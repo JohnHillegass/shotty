@@ -1,4 +1,5 @@
 import boto3
+import botocore
 import click
 
 session = boto3.session.Session(profile_name='shotty')
@@ -29,10 +30,19 @@ def create_snapshots(project):
     "Snapshot EC2 Instance Volumes"
     instances = get_instances(project)
     for instance in instances:
+        print("Stopping {0}...".format(instance.id))
+
+        instance.stop()
+        instance.wait_until_stopped()
         for volume in instance.volumes.all():
             print("Creating snapshot of {0}...".format(volume.id))
             volume.create_snapshot(Description="Created by shotty")
+        
+        print("Starting {0}...".format(instance.id))
 
+        instance.start()
+        instance.wait_until_running()
+    print('Snapshots completed')
     return   
 
 @instances.command('list')
@@ -62,7 +72,11 @@ def stop_instances(project):
     instances = get_instances(project)
     for instance in instances:
         print("Stopping {0}...".format(instance.id))
-        instance.stop()
+        try:
+            instance.stop()
+        except botocore.exceptions.ClientError as error:
+            print("Could not stop {0}. ".format(instance.id) + str(error))
+            continue
 
     return
 
@@ -74,7 +88,11 @@ def start_instances(project):
     instances = get_instances(project)
     for instance in instances:
         print("Starting {0}...".format(instance.id))
-        instance.start()
+        try:
+            instance.start()
+        except botocore.exceptions.ClientError as error:
+            print("Could not start {0}. ".format(instance.id) + str(error))
+            continue
 
     return
 
@@ -121,7 +139,7 @@ def list_snapshots(project):
                     snapshot.progress,
                     snapshot.start_time.strftime("%c")
                 )))
-                
+
     return
 
 
