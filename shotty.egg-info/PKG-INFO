@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: shotty
+Version: 0.1
+Summary: A tool to help snapshot AWS EC2 instance volumes
+Home-page: ['']
+Author: John Hillegass
+Author-email: UNKNOWN
+License: GPLv3+
+Description: UNKNOWN
+Platform: UNKNOWN

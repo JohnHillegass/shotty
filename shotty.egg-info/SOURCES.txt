@@ -1,0 +1,9 @@
+README.md
+setup.py
+shotty/shotty.py
+shotty.egg-info/PKG-INFO
+shotty.egg-info/SOURCES.txt
+shotty.egg-info/dependency_links.txt
+shotty.egg-info/entry_points.txt
+shotty.egg-info/requires.txt
+shotty.egg-info/top_level.txt

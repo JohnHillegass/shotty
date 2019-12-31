@@ -16,3 +16,6 @@ To run this:
 - It uses boto3 and click to create a cli interface for these functions
 - Ipython is included as a dev dependency in case you want to test anything interactively
 - Setuptools is also included as a dev dependency for packaging and distribution
+  - To create a wheel, use:
+    - python setup.py bdist_wheel
+  - Wheel can be used to install with pip via pip3 install dist/shotty
