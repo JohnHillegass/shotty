@@ -14,8 +14,16 @@ def get_instances(project):
     return instances 
 
 @click.group()
+def cli():
+    """Shotty manages shapshotting"""
+
+@cli.group('instances')
 def instances():
     """Commands for instances"""
+
+@cli.group('volumes')
+def volumes():
+    """Commands for volumes"""
 
 @instances.command('list')
 @click.option('--project', default=None, 
