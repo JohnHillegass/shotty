@@ -5,7 +5,7 @@ setup(
     version="0.1",
     author="John Hillegass",
     author_email="",
-    description="A tool to help snapshot AWS EC2 instance volumes",
+    description="A tool to help snapshot AWS EC2 instance volumes. ShnaaaapppShotty.",
     license="GPLv3+",
     packages=['shotty'],
     url=[''],
